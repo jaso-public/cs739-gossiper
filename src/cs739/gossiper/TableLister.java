@@ -3,8 +3,8 @@ package cs739.gossiper;
 import java.util.List;
 import java.util.Map;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
@@ -16,13 +16,13 @@ public class TableLister {
 
 	
 	public static void main(String[] args) {
-		
+
 		// Create AWS credentials using the access key and secret key
-        BasicAWSCredentials credentials = new BasicAWSCredentials(Constants.accessKeyId, Constants.secretKey);
+		AWSCredentialsProvider credentialsProvider = new ProfileCredentialsProvider(Constants.profile);
         
         // Create a DynamoDB client using the credentials
         AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-            .withCredentials(new AWSStaticCredentialsProvider(credentials))
+            .withCredentials(credentialsProvider)
             .withRegion(Constants.region)
             .build();
         

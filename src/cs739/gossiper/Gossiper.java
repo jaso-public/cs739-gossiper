@@ -1,4 +1,4 @@
-ackage cs739.gossiper;
+package cs739.gossiper;
 
 public class Gossiper {
 
