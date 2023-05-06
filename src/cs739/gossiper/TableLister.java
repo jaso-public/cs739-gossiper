@@ -11,9 +11,12 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 
+
+/**
+ * Dumps the contents of the DynamoDB table containing the gossiper events.
+ * (Put your credentials and region in ~/.aws/credentials)
+ */
 public class TableLister {
-
-
 	
 	public static void main(String[] args) {
 

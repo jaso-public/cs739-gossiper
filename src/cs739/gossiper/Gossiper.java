@@ -8,8 +8,6 @@ public class Gossiper {
 	private static final Logger logger = LogManager.getLogger(Gossiper.class);
 
 	public static void main(String[] args) {
-		System.out.println("hello world");
-
 		Configurator.initialize(null, "log4j2.xml");
 
 		// Use the logger to log messages
