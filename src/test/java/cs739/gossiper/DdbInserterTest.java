@@ -1,4 +1,4 @@
-package cs739.gossiper.test;
+package cs739.gossiper;
 
 import java.util.HashMap;
 import java.util.Map;
