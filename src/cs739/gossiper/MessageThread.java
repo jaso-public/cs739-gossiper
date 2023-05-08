@@ -17,6 +17,7 @@ import com.jsoniter.JsonIterator;
 import cs739.gossiper.messages.BootstrapReply;
 import cs739.gossiper.messages.BootstrapRequest;
 import cs739.gossiper.messages.Gossip;
+import cs739.gossiper.messages.Heartbeat;
 import cs739.gossiper.messages.MessageType;
 import cs739.gossiper.messages.Rumor;
 
@@ -97,6 +98,22 @@ public class MessageThread implements Runnable {
                     }                    
                 }
                 return;
+            } else if(messageType == MessageType.Heartbeat.getValue()) {
+                Heartbeat heartbeat = JsonIterator.deserialize(body, Heartbeat.class);
+                Application application = dataStore.getApplication(heartbeat.id);
+                if(application == null) {
+                    application = new Application(heartbeat.type, heartbeat.id, heartbeat.address, 1);
+                    dataStore.updateApplication(application);
+                    Rumor rumor = new Rumor(application, config.rumorTTL);
+                    Set<Application> apps = dataStore.getBootstrapHosts(config.rumorFanOut);
+                    for(Application app : apps) {
+                        executor.submitTask(new SendMessage(app.address, rumor));
+                    }                    
+                } else {
+                    dataStore.incrementHeartbeat(heartbeat.id);
+                }
+                return;
+
            } else {
                 throw new IOException("don't know how to handle messageType:"+messageType);
             }

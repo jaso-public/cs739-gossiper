@@ -3,10 +3,14 @@ package cs739.gossiper;
 import java.util.Objects;
 
 public class Address {
-	public final String ipAddress;
-	public final int port;
+	public String ipAddress;
+	public int port;
 	
-	public Address(String ipAddress, int port) {
+	
+	public Address() {
+    }
+
+    public Address(String ipAddress, int port) {
 		super();
 		this.ipAddress = ipAddress;
 		this.port = port;

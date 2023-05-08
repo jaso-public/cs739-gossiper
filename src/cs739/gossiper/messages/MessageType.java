@@ -5,6 +5,7 @@ public enum MessageType {
     Rumor(21),
     BootstrapRequest(31),
     BootstrapReply(32),
+    Heartbeat(41),
     Dump(101);
 
     private int value;

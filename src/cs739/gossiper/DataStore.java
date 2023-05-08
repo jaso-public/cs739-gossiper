@@ -8,7 +8,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class DataStore {
+    private static final Logger logger = LogManager.getLogger(DataStore.class);
 	
     private final Config config;
     private final EventDispatcher eventDispatcher;
@@ -180,6 +184,16 @@ public class DataStore {
             }
         }
         throw new RuntimeException("WTF? ran out of apps");
+    }
+
+
+    public void incrementHeartbeat(String id) {
+        Info info = apps.get(id);
+        if(info==null ) {
+            logger.warn("app:"+id+" not found");
+        } else {
+            info.heartbeat++;
+        }       
     }
 
 
