@@ -13,6 +13,7 @@
           <release>17</release>
         </configuration>
       </plugin>
+           
     </plugins>
   </build>
   <dependencies>
@@ -21,7 +22,6 @@
   		<artifactId>jsoniter</artifactId>
   		<version>0.9.19</version>
   	</dependency>
-  	
   	<dependency>
     	<groupId>com.amazonaws</groupId>
     	<artifactId>aws-java-sdk-dynamodb</artifactId>
