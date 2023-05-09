@@ -20,9 +20,9 @@ public class SendGossip implements Runnable {
     @Override
     public void run() {
         Address address = dataStore.getRandomPeer();
-        
+        logger.info("Gossiping with:"+address);
+
         try(Socket socket = new Socket(address.ipAddress, address.port)) {
-            logger.info("socket created -- sending message");
             Gossip request = new Gossip(dataStore.getApplications());
             MessageHelper.send(socket.getOutputStream(), request); 
             Gossip reply = (Gossip)MessageHelper.readMessage(socket.getInputStream());
@@ -30,6 +30,5 @@ public class SendGossip implements Runnable {
         } catch(Throwable t) {
             logger.error("failed to send to "+address, t);
         }
-        logger.info("return from sendMessage:"+address);
     }
 }
