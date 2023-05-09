@@ -19,11 +19,9 @@ public class SendMessage implements Runnable {
 		this.message = message;
 	}
 
-
-
 	@Override
 	public void run() {
-	    logger.info("creating socket");
+	    logger.info("creating socket sendMessage:"+address);
         
 		try(Socket socket = new Socket(address.ipAddress, address.port)) {
 	        logger.info("socket created -- sending message");
@@ -31,4 +29,6 @@ public class SendMessage implements Runnable {
 		} catch(Throwable t) {
 			logger.error("failed to send to "+address, t);
 		}
-	}}
+		logger.info("return from sendMessage:"+address);
+	}
+}
