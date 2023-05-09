@@ -145,6 +145,8 @@ public class DataStore {
             Optional<Info> info = values.stream().skip(rng.nextInt(values.size())).findFirst();
             if (info.get() == null)
                 continue;
+            if (!info.get().type.equals(Application.GossipingApp))
+                continue;
             return info.get().address;
         }   
     }  
