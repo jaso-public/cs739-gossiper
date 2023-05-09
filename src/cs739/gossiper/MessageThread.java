@@ -38,6 +38,10 @@ public class MessageThread implements Runnable {
     private void doLoop(Socket socket) throws Exception {
         while(true) {
             Message message = MessageHelper.readMessage(socket.getInputStream());
+            if(message == null) {
+                logger.info("socket closed:"+socket);
+                return;
+            }
                        
             if(message.getType() == MessageType.BootstrapRequest) {
                 BootstrapRequest request = (BootstrapRequest) message;
