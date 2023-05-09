@@ -53,7 +53,7 @@ public class MessageThread implements Runnable {
                 BootstrapReply reply = new BootstrapReply(appList);
                 MessageHelper.send(socket.getOutputStream(), reply);   
                 dataStore.updateApplication(request.application);
-                continue;
+                return;
             }
             
             if(message.getType() == MessageType.Gossip) {
@@ -104,7 +104,7 @@ public class MessageThread implements Runnable {
                 IpAddressReply reply = new IpAddressReply(address);
                 logger.info("got request for IpAddress -- reply:"+reply);
                 MessageHelper.send(socket.getOutputStream(), reply);   
-                continue;
+                return;
             }          
 
              
