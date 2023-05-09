@@ -18,4 +18,12 @@ public class BootstrapRequest implements Message {
     public MessageType getType() {
         return MessageType.BootstrapRequest;
     }
+
+
+    @Override
+    public String toString() {
+        return "BootstrapRequest [application=" + application + "]";
+    }
+    
+    
 }

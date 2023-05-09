@@ -18,4 +18,11 @@ public class BootstrapReply implements Message {
     public MessageType getType() {
         return MessageType.BootstrapReply;
     }
+
+    @Override
+    public String toString() {
+        return "BootstrapReply [applications=" + applications + "]";
+    }
+    
+    
 }

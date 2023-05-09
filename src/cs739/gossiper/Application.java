@@ -4,11 +4,11 @@ public class Application {
     
     public static final String GossipingApp = "gossiper"; 
     
-    String type;
-    String id;
-    Address address;
-    long heartbeat;
-    Status s = Status.Ok;
+    public String type;
+    public String id;
+    public Address address;
+    public long heartbeat;
+    public Status s = Status.Ok;
 
     
     public Application() {
@@ -22,4 +22,10 @@ public class Application {
         this.heartbeat = heartbeat;
     }
 
-}
+
+    @Override
+    public String toString() {
+        return "Application [type=" + type + ", id=" + id + ", address=" + address + ", heartbeat=" + heartbeat + ", s="
+                + s + "]";
+    }
+ }
