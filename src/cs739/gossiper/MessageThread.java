@@ -116,17 +116,13 @@ public class MessageThread implements Runnable {
             socket.setSoTimeout(1000);
             handleMessage(socket);
         } catch(Throwable t) {
-            logger.error("doLoop()", t);
-            closeQuietly(socket);
-        }
-    }
-    
-    private void closeQuietly(Socket socket) {
+            logger.error("handleMessage()", t);
+        }        
+        
         try {
             socket.close();
         } catch(Throwable t) {
             logger.error("closing socket", t);
         }
     }
-
 }

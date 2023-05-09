@@ -1,7 +1,7 @@
 package cs739.gossiper;
 
 public class Config {
-    String pathToApplicationId = "/home/ubuntu/cs739-gossiper/applicationId";
+    String pathToApplicationId = "/tmp/applicationId";
     
     int bootstrapCount = 10;
     int timeToIncommunicado = 10000;
