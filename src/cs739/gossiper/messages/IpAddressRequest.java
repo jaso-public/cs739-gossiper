@@ -6,4 +6,9 @@ public class IpAddressRequest implements Message {
     public MessageType getType() {
         return MessageType.IpAddressRequest;
     }
+
+    @Override
+    public String toString() {
+        return "IpAddressRequest []";
+    }
 }

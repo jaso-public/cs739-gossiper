@@ -11,7 +11,7 @@ import cs739.gossiper.messages.IpAddressRequest;
 import cs739.gossiper.messages.Message;
 
 public class GetMyIpAddress {
-    private static final Logger logger = LogManager.getLogger(GetRemoteApps.class);
+    private static final Logger logger = LogManager.getLogger(GetMyIpAddress.class);
    
     public static void main(String[] args) throws InterruptedException {
         Configurator.initialize(null, "log4j2.xml");
@@ -20,7 +20,7 @@ public class GetMyIpAddress {
         IpAddressRequest request = new IpAddressRequest();
         
         try(Socket socket = new Socket(config.bootstrapHost, config.bootstrapPort)) {
-            logger.info("socket created -- sending message");
+            logger.info("socket created -- sending message:"+request);
             MessageHelper.send(socket.getOutputStream(), request);
             Message reply = MessageHelper.readMessage(socket.getInputStream());
             System.out.println(reply.toString());
