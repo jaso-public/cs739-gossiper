@@ -109,6 +109,7 @@ public class DataStore {
 	    if(info.status != Status.Ok) {
             ddbInserter.Record(info.toMap("BecameOk"));	        
 	    }
+        info.status = Status.Ok;
 	}
 	
     public synchronized int getCount(String type) {
@@ -195,6 +196,14 @@ public class DataStore {
             logger.warn("app:"+id+" not found");
         } else {
             info.heartbeat++;
+            info.lastHeartbeatMillis = System.currentTimeMillis();
+            if(info.eventId>=0) eventDispatcher.cancel(info.eventId);
+            eventDispatcher.register(config.timeToIncommunicado, info);
+            if(info.status != Status.Ok) {
+                ddbInserter.Record(info.toMap("BecameOk"));         
+            }
+            info.status = Status.Ok;
+
         }       
     }
 

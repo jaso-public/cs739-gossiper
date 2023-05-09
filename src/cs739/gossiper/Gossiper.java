@@ -44,6 +44,12 @@ public class Gossiper implements Handler {
         HashMap<String,String> map = new HashMap<>();
         map.put("event", "start");
         ddbInserter.Record(map);
+        
+        Address address = new Address(myIpAddress, config.listenPort);
+        Application application = new Application(Application.GossipingApp, myApplicationId, address, 1);
+        dataStore.updateApplication(application);
+        
+        eventDispatcher.register(config.heartbeatInterval, this);
     }
 
 
