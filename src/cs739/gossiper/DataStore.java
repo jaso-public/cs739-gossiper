@@ -198,15 +198,13 @@ public class DataStore {
         } else {
             info.heartbeat++;
             info.lastHeartbeatMillis = System.currentTimeMillis();
+            info.status = Status.Ok;
+            
             if(info.eventId>=0) eventDispatcher.cancel(info.eventId);
             info.eventId = eventDispatcher.register(config.timeToIncommunicado, info);
             if(info.status != Status.Ok) {
                 ddbInserter.Record(info.toMap("BecameOk"));         
             }
-            info.status = Status.Ok;
-
         }       
     }
-
-
 }
