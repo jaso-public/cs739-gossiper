@@ -7,7 +7,7 @@ public enum MessageType {
     BootstrapReply(32),
     Heartbeat(41),
     IpAddressRequest(101),
-    IpAddressReply(101),
+    IpAddressReply(102),
     Dump(1001);
 
     private int value;
