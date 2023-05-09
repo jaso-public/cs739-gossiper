@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Random;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -146,6 +147,8 @@ public class Gossiper implements Handler {
 
 	public static void main(String[] args) throws Exception {
 		Configurator.initialize(null, "log4j2.xml");
+		Configurator.setRootLevel(Level.INFO);
+		
         Config config = new Config();
         
         boolean isBootstrapper = args.length > 0 && "bootstrapper".equals(args[0]);
