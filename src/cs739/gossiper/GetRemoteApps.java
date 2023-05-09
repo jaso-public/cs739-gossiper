@@ -19,7 +19,7 @@ public class GetRemoteApps {
         Config config = new Config();        
         Gossip request = new Gossip(new ArrayList<Application>());
         
-        try(Socket socket = new Socket(config.bootstrapHost, config.bootstrapPort)) {
+        try(Socket socket = new Socket("54.188.42.102", config.bootstrapPort)) {
             logger.info("socket created -- sending message");
             MessageHelper.send(socket.getOutputStream(), request);
             Message reply = MessageHelper.readMessage(socket.getInputStream());

@@ -94,6 +94,7 @@ public class DataStore {
 	    
 	    if(app.heartbeat <= info.heartbeat) {
 	        // this is old news
+	        logger.info("IGNORED updateApplication -- app.heartbeat:"+app.heartbeat+" info.heartbeat:"+info.heartbeat);
 	        return;
 	    }
 	    
@@ -109,6 +110,7 @@ public class DataStore {
 	    info.lastHeartbeatMillis = System.currentTimeMillis();
 	    if(info.eventId>=0) eventDispatcher.cancel(info.eventId);
 	    info.eventId = eventDispatcher.register(config.timeToIncommunicado, info);
+	    info.heartbeat = app.heartbeat;
 	    if(info.status != Status.Ok) {
             ddbInserter.Record(info.toMap("BecameOk"));	        
 	    }
