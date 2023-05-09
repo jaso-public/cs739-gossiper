@@ -47,6 +47,7 @@ public class DataStore {
             // this gets called from the dispather
             // so grab the DataStore lock
             synchronized (DataStore.this) {
+                logger.info("now:"+now+" lastHeartbeat:"+lastHeartbeatMillis+" id:"+id);
                 status = Status.Incommunicado;
                 eventId = -1;
                 ddbInserter.Record(toMap("WentIncommunicado"));
