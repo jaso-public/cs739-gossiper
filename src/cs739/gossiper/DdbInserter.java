@@ -28,10 +28,10 @@ public class DdbInserter implements Runnable {
 
 	static class Record {
 		final String application;
-		final long timestamp;
+		final String timestamp;
 		final Map<String,String> values;
 		
-		public Record(String application, long timestamp, Map<String, String> values) {
+		public Record(String application, String timestamp, Map<String, String> values) {
 			this.application = application;
 			this.timestamp = timestamp;
 			this.values = values;
@@ -40,7 +40,7 @@ public class DdbInserter implements Runnable {
 	
 	static class DrainRecord extends Record {
 		public DrainRecord() {
-			super(null, 0, null);
+			super(null, "0", null);
 		}
 	}
 	
@@ -61,9 +61,20 @@ public class DdbInserter implements Runnable {
 		}		
 	}
 	
+	static long lastTimeStamp = 0;
+	static int counter = 0;
+	
 	public void Record(Map<String,String> values) {
 		logger.info("record values");
-		records.add(new Record(applicationId, System.currentTimeMillis(), values));
+		long now = System.currentTimeMillis();
+		if(now == lastTimeStamp) {
+		    counter++;
+		} else {
+		    lastTimeStamp = now;
+		    counter=0;
+		}
+		String time = now +"."+counter;
+		records.add(new Record(applicationId, time , values));
 	}
 	
 	public void drain() {
@@ -108,7 +119,7 @@ public class DdbInserter implements Runnable {
 			
 			Map<String,AttributeValue> item = new HashMap<>();
 			item.put(Constants.partitionKey, new AttributeValue(applicationId));
-			item.put(Constants.sortKey, new AttributeValue().withN(String.valueOf(record.timestamp)));
+			item.put(Constants.sortKey, new AttributeValue().withN(record.timestamp));
 			for(Map.Entry<String,String> entry : record.values.entrySet() ) {
 				item.put(entry.getKey(), new AttributeValue(entry.getValue()));								
 			}
