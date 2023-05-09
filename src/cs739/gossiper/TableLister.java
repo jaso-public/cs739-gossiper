@@ -1,7 +1,7 @@
 package cs739.gossiper;
 
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
@@ -18,6 +18,31 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
  */
 public class TableLister {
 	
+    static Map<String, List<String>> table = new HashMap<String,List<String>>() {};
+
+    public static void add_item(String key, String value){
+        if(table.get(key) == null){
+            table.put(key, new ArrayList<String>());
+        }
+        table.get(key).add(value);
+    }
+
+    public static void even_table(){
+        int max = -1;
+
+        for (var list : table.entrySet()) {
+            if(max < list.getValue().size()){
+                max = list.getValue().size();
+            }
+        }
+
+        for (var list : table.entrySet()) {
+            while(max > list.getValue().size()){
+                list.getValue().add(null);
+            }
+        }
+    }
+
 	public static void main(String[] args) {
 
 		// Create AWS credentials using the access key and secret key
@@ -29,6 +54,8 @@ public class TableLister {
             .withRegion(Constants.region)
             .build();
         
+        
+
         ScanRequest scanRequest = new ScanRequest().withTableName(Constants.tableName);
         ScanResult result = null;
         do {
@@ -41,16 +68,36 @@ public class TableLister {
 
             	String application = item.get(Constants.partitionKey).getS();
                 String timestamp = item.get(Constants.sortKey).getN();
-                System.out.println(application+" "+timestamp);
-                
+
+                add_item("application", application);
+                add_item("timestamp", timestamp);
+
                 for(Map.Entry<String, AttributeValue> value : item.entrySet()) {
                 	String name = value.getKey();
                   	if(Constants.partitionKey.equals(name)) continue;
                   	if(Constants.sortKey.equals(name)) continue;
                            	
-                	System.out.println("    "+name+" "+value.getValue());
+                    add_item(name, value.getValue().getS());
                 }
+                even_table();
              }
         } while (result.getLastEvaluatedKey() != null);
+
+        List<String> keys = new ArrayList<String>();
+        int num_rows = 0;
+        for (var columns : table.entrySet()) {
+            keys.add(columns.getKey());
+            num_rows = columns.getValue().size();
+            System.out.print(columns.getKey() + ",");
+        }
+        System.out.println("");
+
+        for(int i = 0; i < num_rows; i++){
+            for (String string : keys) {
+                System.out.print(table.get(string).get(i) + ",");
+            }
+            System.out.println("");
+        }
+        System.out.println("");
 	}
 }
