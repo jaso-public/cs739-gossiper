@@ -1,23 +1,19 @@
 package cs739.gossiper;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.zip.CRC32;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.jsoniter.JsonIterator;
 
 import cs739.gossiper.messages.BootstrapReply;
 import cs739.gossiper.messages.BootstrapRequest;
 import cs739.gossiper.messages.Gossip;
 import cs739.gossiper.messages.Heartbeat;
+import cs739.gossiper.messages.Message;
 import cs739.gossiper.messages.MessageType;
 import cs739.gossiper.messages.Rumor;
 
@@ -38,55 +34,31 @@ public class MessageThread implements Runnable {
         this.executor = executor;
     }
 
-    public long computeCrc(byte[] bytes) {
-        CRC32 crc = new CRC32();
-        crc.update(bytes);
-        return crc.getValue();      
-    }
- 
-    public byte[] read(InputStream is, int size) throws IOException {
-        byte[] result = new byte[size];
-        int offset = 0;
-        int remaining = size;
-        while(remaining > 0) {
-            int count = is.read(result, offset, remaining);
-            if(count<0) {
-                if(offset == 0) return null;
-                throw new IOException("premute end of stream");
-            }
-            offset += count;
-            remaining -= offset;
-        }
-        return result;
-    }
-
 
     private void doLoop(Socket socket) throws Exception {
         while(true) {
-            byte[] header = read(socket.getInputStream(), 16);
-            ByteBuffer buffer = ByteBuffer.wrap(header);
-            int messageType = buffer.getInt();
-            int messageLength = buffer.getInt();
-            long messageCrc = buffer.getLong();
-            
-            byte[] body = read(socket.getInputStream(), messageLength);
-            if(body==null) throw new IOException("message doesn't have a body");
-            if(messageCrc != computeCrc(body)) throw new IOException("message crc mismatch");
-           
-            if(messageType == MessageType.BootstrapRequest.getValue()) {
-                BootstrapRequest request = JsonIterator.deserialize(body, BootstrapRequest.class);
+            Message message = MessageHelper.readMessage(socket.getInputStream());
+                       
+            if(message.getType() == MessageType.BootstrapRequest) {
+                BootstrapRequest request = (BootstrapRequest) message;
                 Set<Application> apps = dataStore.getBootstrapHosts(config.bootstrapCount);
                 List<Application> appList = new ArrayList<>(apps);
                 BootstrapReply reply = new BootstrapReply(appList);
-                SendMessage.send(socket.getOutputStream(), reply);   
+                MessageHelper.send(socket.getOutputStream(), reply);   
                 dataStore.updateApplication(request.application);
-            } else if(messageType == MessageType.Gossip.getValue()) {
-                Gossip  request = JsonIterator.deserialize(body, Gossip.class);
+                continue;
+            }
+            
+            if(message.getType() == MessageType.Gossip) {
+                Gossip  request = (Gossip) message;
                 for(Application app : request.applications) dataStore.updateApplication(app);
                 Gossip reply = new Gossip(dataStore.getApplications());
-                SendMessage.send(socket.getOutputStream(), reply);   
-            } else if(messageType == MessageType.Rumor.getValue()) {
-                Rumor rumor = JsonIterator.deserialize(body, Rumor.class);
+                MessageHelper.send(socket.getOutputStream(), reply);   
+                continue;
+            }          
+                
+            if(message.getType() == MessageType.Rumor) {
+                Rumor rumor = (Rumor) message;
                 Application application = dataStore.getApplication(rumor.application.id);
                 if(application == null) {
                     dataStore.updateApplication(rumor.application);
@@ -98,8 +70,11 @@ public class MessageThread implements Runnable {
                     }                    
                 }
                 return;
-            } else if(messageType == MessageType.Heartbeat.getValue()) {
-                Heartbeat heartbeat = JsonIterator.deserialize(body, Heartbeat.class);
+            }
+            
+            
+            if(message.getType() == MessageType.Heartbeat) {
+                Heartbeat heartbeat = (Heartbeat) message;
                 Application application = dataStore.getApplication(heartbeat.id);
                 if(application == null) {
                     application = new Application(heartbeat.type, heartbeat.id, heartbeat.address, 1);
@@ -113,10 +88,9 @@ public class MessageThread implements Runnable {
                     dataStore.incrementHeartbeat(heartbeat.id);
                 }
                 return;
-
-           } else {
-                throw new IOException("don't know how to handle messageType:"+messageType);
-            }
+            } 
+             
+            throw new IOException("don't know how to handle message:"+message);
         }        
     }
 
