@@ -125,7 +125,7 @@ public class Gossiper implements Handler {
         String myApplicationId = getApplicationId(config);
         
 		
-		Gossiper gossiper = new Gossiper(config, myIpAddress, myApplicationId);
+		Gossiper gossiper = new Gossiper(config, myApplicationId, myIpAddress);
 		try {
             gossiper.loop();
         } catch (Exception e) {
