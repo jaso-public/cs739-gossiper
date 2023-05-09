@@ -46,7 +46,7 @@ public class DdbInserter implements Runnable {
 	
 	public DdbInserter(String applicationId) {
 		this.applicationId = applicationId;
-		thread = new Thread(this);
+		thread = new Thread(this,"DdbInserterThread");
 		thread.start();
 	}
 

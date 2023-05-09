@@ -13,6 +13,9 @@ import com.jsoniter.output.JsonStream;
 import cs739.gossiper.messages.BootstrapReply;
 import cs739.gossiper.messages.BootstrapRequest;
 import cs739.gossiper.messages.Gossip;
+import cs739.gossiper.messages.Heartbeat;
+import cs739.gossiper.messages.IpAddressReply;
+import cs739.gossiper.messages.IpAddressRequest;
 import cs739.gossiper.messages.Message;
 import cs739.gossiper.messages.MessageType;
 import cs739.gossiper.messages.Rumor;
@@ -82,10 +85,18 @@ public class MessageHelper {
             return JsonIterator.deserialize(body, Rumor.class);
         }
         
-//        if(messageType == MessageType.Heartbeat.getValue()) {
-//            return JsonIterator.deserialize(body, Heartbeat.class);
-//        }
-//        
+        if(messageType == MessageType.IpAddressRequest.getValue()) {
+            return JsonIterator.deserialize(body, IpAddressRequest.class);
+        }
+        
+        if(messageType == MessageType.IpAddressReply.getValue()) {
+            return JsonIterator.deserialize(body, IpAddressReply.class);
+        }
+        
+        if(messageType == MessageType.Heartbeat.getValue()) {
+            return JsonIterator.deserialize(body, Heartbeat.class);
+        }
+        
         throw new IOException("don't know how to handle messageType:"+messageType);
     }
     

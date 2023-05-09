@@ -1,6 +1,7 @@
 package cs739.gossiper;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,8 @@ import cs739.gossiper.messages.BootstrapReply;
 import cs739.gossiper.messages.BootstrapRequest;
 import cs739.gossiper.messages.Gossip;
 import cs739.gossiper.messages.Heartbeat;
+import cs739.gossiper.messages.IpAddressReply;
+import cs739.gossiper.messages.IpAddressRequest;
 import cs739.gossiper.messages.Message;
 import cs739.gossiper.messages.MessageType;
 import cs739.gossiper.messages.Rumor;
@@ -93,6 +96,17 @@ public class MessageThread implements Runnable {
                 }
                 return;
             } 
+            
+            if(message.getType() == MessageType.IpAddressRequest) {
+                @SuppressWarnings("unused")
+                IpAddressRequest  request = (IpAddressRequest) message;
+                InetAddress remoteAddress = socket.getInetAddress();
+                Address address = new Address(remoteAddress.getHostAddress(), socket.getPort());
+                IpAddressReply reply = new IpAddressReply(address);
+                MessageHelper.send(socket.getOutputStream(), reply);   
+                continue;
+            }          
+
              
             throw new IOException("don't know how to handle message:"+message);
         }        

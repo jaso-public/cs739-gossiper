@@ -20,4 +20,11 @@ public class Gossip implements Message {
     public MessageType getType() {
         return MessageType.Gossip;
     }
+
+    @Override
+    public String toString() {
+        return "Gossip [applications=" + applications + "]";
+    }
+    
+    
 }
