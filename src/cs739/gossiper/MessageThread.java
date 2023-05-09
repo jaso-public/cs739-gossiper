@@ -103,6 +103,7 @@ public class MessageThread implements Runnable {
                 InetAddress remoteAddress = socket.getInetAddress();
                 Address address = new Address(remoteAddress.getHostAddress(), socket.getPort());
                 IpAddressReply reply = new IpAddressReply(address);
+                logger.info("got request for IpAddress -- reply:"+reply);
                 MessageHelper.send(socket.getOutputStream(), reply);   
                 continue;
             }          
