@@ -1,7 +1,9 @@
 package cs739.gossiper;
 
 
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,9 +15,9 @@ import cs739.gossiper.messages.Message;
 public class GetMyIpAddress {
     private static final Logger logger = LogManager.getLogger(GetMyIpAddress.class);
    
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws Exception {
         Configurator.initialize(null, "log4j2.xml");
-
+        
         Config config = new Config();        
         IpAddressRequest request = new IpAddressRequest();
         
