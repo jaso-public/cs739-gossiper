@@ -17,6 +17,7 @@ import org.apache.logging.log4j.core.config.Configurator;
 
 import cs739.gossiper.messages.BootstrapReply;
 import cs739.gossiper.messages.BootstrapRequest;
+import cs739.gossiper.messages.Gossip;
 import cs739.gossiper.messages.IpAddressReply;
 import cs739.gossiper.messages.IpAddressRequest;
 import cs739.gossiper.messages.Message;
@@ -81,12 +82,18 @@ public class Gossiper implements Handler {
         }	    
 	}
     
-
     @Override
     public void onEvent(long now) {
         logger.info("doing a heartbeat for application:"+myApplicationId+" now:"+now);
         dataStore.incrementHeartbeat(myApplicationId);
         eventDispatcher.register(config.heartbeatInterval, this);
+        
+        try {
+            Address peer = dataStore.getRandomPeer();
+            executor.submitTask(new SendMessage(peer, new Gossip(dataStore.getApplications())));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
     
     
@@ -146,8 +153,7 @@ public class Gossiper implements Handler {
         
         boolean isBootstrapper = args.length > 0 && "bootstrapper".equals(args[0]);
         String myIpAddress = getMyIpAddress(config, isBootstrapper);        
-        String myApplicationId = getApplicationId(config);
-        
+        String myApplicationId = getApplicationId(config);       
 		
 		Gossiper gossiper = new Gossiper(config, myApplicationId, myIpAddress);
 		try {

@@ -17,10 +17,10 @@ public class DataStore {
     private final Config config;
     private final EventDispatcher eventDispatcher;
     private final DdbInserter ddbInserter;
+    private final Random rng = new Random();
     
     private final Map<String,Info> apps = new HashMap<>();
-    private final Random rng = new Random();
-
+ 
     private class Info implements Handler {
         final String type;
         final String id;
@@ -137,6 +137,16 @@ public class DataStore {
         return result;
     }
     
+    //TODO FIX THIS!!!!!!!!!!
+    public synchronized Address getRandomPeer() {
+        Address result = null;
+        for(Info i : apps.values()) {
+            if(! i.type.equals(Application.GossipingApp)) continue;
+            if(result==null) result = i.address;
+            if(rng.nextDouble() < 0.1) result = i.address;           
+        }
+        return result;       
+    }  
  
     public void incrementHeartbeat(String id) {
         Info info = apps.get(id);
