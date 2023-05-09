@@ -70,7 +70,7 @@ public class MessageThread implements Runnable {
                 dataStore.updateApplication(rumor.application);
                 if(rumor.ttl<1) return;
                 rumor.ttl--;
-                Set<Application> apps = dataStore.getBootstrapHosts(config.rumorFanOut);
+                Set<Application> apps = dataStore.getRandomApplications(config.rumorFanOut);
                 for(Application app : apps) {
                     executor.submitTask(new SendMessage(app.address, rumor));
                 }                    
