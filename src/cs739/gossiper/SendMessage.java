@@ -61,9 +61,12 @@ public class SendMessage implements Runnable {
 
 	@Override
 	public void run() {
+	    logger.info("creating socket");
+        
 		try(Socket socket = new Socket(address.ipAddress, address.port)) {
+	        logger.info("socket created -- sending message");
 		    send(socket.getOutputStream(), message);					
 		} catch(Throwable t) {
-			logger.error("failed to send to "+address);
+			logger.error("failed to send to "+address, t);
 		}
 	}}

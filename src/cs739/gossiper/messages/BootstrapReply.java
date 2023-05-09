@@ -7,6 +7,9 @@ import cs739.gossiper.Application;
 public class BootstrapReply implements Message {
     public List<Application> applications;
 
+    public BootstrapReply() {
+    }
+
     public BootstrapReply(List<Application> applications) {
         this.applications = applications;
     }

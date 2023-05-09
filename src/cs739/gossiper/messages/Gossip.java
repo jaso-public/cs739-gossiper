@@ -5,20 +5,19 @@ import java.util.List;
 import cs739.gossiper.Application;
 
 public class Gossip implements Message {
-    final MessageType type = MessageType.Gossip;
+
+    public List<Application> applications;
     
-    final List<Application> applications;
-    
+
+    public Gossip() {
+    }
+
     public Gossip(List<Application> applications) {
         this.applications = applications;
     }
 
     @Override
     public MessageType getType() {
-        return type;
-    }
-
-    public List<Application> getApplications() {
-        return applications;
+        return MessageType.Gossip;
     }
 }

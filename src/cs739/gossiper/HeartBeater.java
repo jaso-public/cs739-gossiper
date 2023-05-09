@@ -20,6 +20,7 @@ public class HeartBeater implements Handler {
     }
     
     private void sendHeartbeat() {
+        logger.info("sending hearbeat");
         Heartbeat heartbeat = new Heartbeat("FooApp", "1234", new Address("127.0.0.1", 56678));
         Address serverAddress = new Address("127.0.0.1", 3001);
         try {
@@ -38,11 +39,11 @@ public class HeartBeater implements Handler {
     }
     
     public static void main(String[] args) throws InterruptedException {
+        @SuppressWarnings("unused")
         HeartBeater heartbeater = new HeartBeater();
-        Thread.sleep(1000);
-
+        while(true) {
+            logger.info("Heartbeater still running");
+            Thread.sleep(30);
+        }
     }
-
-
-
 }

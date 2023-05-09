@@ -31,6 +31,7 @@ public class Gossiper {
         try (ServerSocket ss = new ServerSocket(config.listenPort, config.backlog)) {
             while(true) {
                 Socket s = ss.accept();
+                logger.info("accepted socket:"+s);
                 executor.submitTask(new MessageThread(s, config, dataStore, executor));               
             }
         }	    
@@ -39,6 +40,8 @@ public class Gossiper {
 
 	public static void main(String[] args) {
 		Configurator.initialize(null, "log4j2.xml");
+		
+		
 		Gossiper gossiper = new Gossiper();
 		try {
             gossiper.loop();

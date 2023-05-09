@@ -6,6 +6,10 @@ public class BootstrapRequest implements Message {
     
     public Application application;
 
+    public BootstrapRequest() {
+    }
+
+
     public BootstrapRequest(Application application) {
         this.application = application;
     }

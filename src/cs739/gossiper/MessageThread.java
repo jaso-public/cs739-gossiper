@@ -82,7 +82,7 @@ public class MessageThread implements Runnable {
                 dataStore.updateApplication(request.application);
             } else if(messageType == MessageType.Gossip.getValue()) {
                 Gossip  request = JsonIterator.deserialize(body, Gossip.class);
-                for(Application app : request.getApplications()) dataStore.updateApplication(app);
+                for(Application app : request.applications) dataStore.updateApplication(app);
                 Gossip reply = new Gossip(dataStore.getApplications());
                 SendMessage.send(socket.getOutputStream(), reply);   
             } else if(messageType == MessageType.Rumor.getValue()) {

@@ -128,7 +128,9 @@ public class DataStore {
     
 
     public synchronized Application getApplication(String id) {
-        return apps.get(id).toApp();
+        Info info = apps.get(id);
+        if(info == null) return null;
+        return info.toApp();
     }
 
 
