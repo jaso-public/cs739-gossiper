@@ -15,8 +15,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 
+import cs739.gossiper.messages.BootstrapReply;
+import cs739.gossiper.messages.BootstrapRequest;
 import cs739.gossiper.messages.IpAddressReply;
 import cs739.gossiper.messages.IpAddressRequest;
+import cs739.gossiper.messages.Message;
 
 public class Gossiper implements Handler {
 	private static final Logger logger = LogManager.getLogger(Gossiper.class);
@@ -48,6 +51,20 @@ public class Gossiper implements Handler {
         Address address = new Address(myIpAddress, config.listenPort);
         Application application = new Application(Application.GossipingApp, myApplicationId, address, 1);
         dataStore.updateApplication(application);
+        
+        BootstrapRequest request = new BootstrapRequest(application);
+        
+        try(Socket socket = new Socket(config.bootstrapHost, config.bootstrapPort)) {
+            logger.info("socket created -- sending message");
+            MessageHelper.send(socket.getOutputStream(), request);
+            BootstrapReply reply = (BootstrapReply) MessageHelper.readMessage(socket.getInputStream());
+            System.out.println(reply.toString());
+            socket.close();
+            for(Application app : reply.applications) dataStore.updateApplication(app);
+        } catch(Throwable t) {
+            logger.error("failed to get bootstrap list from:"+config.bootstrapHost, t);
+        }
+
         
         eventDispatcher.register(config.heartbeatInterval, this);
     }

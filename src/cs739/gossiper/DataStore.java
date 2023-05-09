@@ -60,7 +60,7 @@ public class DataStore {
         
         public Map<String,String> toMap(String event) {
             Map<String,String> result = new HashMap<>();
-            result.put("type", id);
+            result.put("type", type);
             result.put("id", id);
             result.put("ipAddr", address.ipAddress);
             result.put("port", String.valueOf(address.port));
@@ -112,15 +112,7 @@ public class DataStore {
 	    }
         info.status = Status.Ok;
 	}
-	
-    public synchronized int getCount(String type) {
-        int count = 0;
-        for(Info i : apps.values()) {
-            if(i.type.equals(type)) count++;
-        }
-	    return count;
-	}
-	
+		
     
     public synchronized List<Application> getApplications() {
         ArrayList<Application> result = new ArrayList<>();
@@ -136,61 +128,16 @@ public class DataStore {
     }
 
 
-    public synchronized Set<Application> getBootstrapHosts(int bootstrapCount) {
-        int countNotOk = 0;
-        int countOk = 0;
-        for(Info i : apps.values()) {
-            if(i.type.equals(Application.GossipingApp)) {
-                if(i.status == Status.Ok) {
-                    countOk++;
-                } else {
-                    countNotOk++;
-                }
-            }
-        }
-         
-        
+    public synchronized Set<Application> getBootstrapHosts(int bootstrapCount) {                
         Set<Application> result = new HashSet<>();
-        while(result.size() < countOk) {
-            result.add(randomOkApp(Application.GossipingApp));
-            if(result.size() >= bootstrapCount) return result;
-        }
-        while(result.size() < countNotOk) {
-            result.add(randomNotOkApp(Application.GossipingApp));
-            if(result.size() >= bootstrapCount) return result;
+        for(Info i : apps.values()) {
+            if(! i.type.equals(Application.GossipingApp)) continue;
+            result.add(i.toApp());
         }
         return result;
     }
     
-    private Application randomOkApp(String type) {
-        int count = getCount(type);
-        if(count==0) return null;
-        int select = rng.nextInt(count);
-        for(Info i : apps.values()) {
-            if(i.type.equals(type)) {
-                if(i.status != Status.Ok) continue;
-                if(select == 0) return i.toApp();
-                select--;
-            }
-        }
-        throw new RuntimeException("WTF? ran out of apps");
-    }
-
-    private Application randomNotOkApp(String type) {
-        int count = getCount(type);
-        if(count==0) return null;
-        int select = rng.nextInt(count);
-        for(Info i : apps.values()) {
-            if(i.type.equals(type)) {
-                if(i.status == Status.Ok) continue;
-                if(select == 0) return i.toApp();
-                select--;
-            }
-        }
-        throw new RuntimeException("WTF? ran out of apps");
-    }
-
-
+ 
     public void incrementHeartbeat(String id) {
         Info info = apps.get(id);
         if(info==null ) {

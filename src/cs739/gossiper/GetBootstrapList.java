@@ -22,7 +22,7 @@ public class GetBootstrapList {
             System.out.println(app);
             BootstrapRequest request = new BootstrapRequest(app);
             
-            try(Socket socket = new Socket(config.bootstrapHost, config.bootstrapPort)) {
+            try(Socket socket = new Socket("54.188.42.102", config.bootstrapPort)) {
                 logger.info("socket created -- sending message");
                 MessageHelper.send(socket.getOutputStream(), request);
                 Message reply = MessageHelper.readMessage(socket.getInputStream());
