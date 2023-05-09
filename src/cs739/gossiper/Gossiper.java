@@ -153,9 +153,8 @@ public class Gossiper implements Handler {
         
         boolean isBootstrapper = args.length > 0 && "bootstrapper".equals(args[0]);
         String myIpAddress = getMyIpAddress(config, isBootstrapper);        
-        String myApplicationId = getApplicationId(config);       
 		
-		Gossiper gossiper = new Gossiper(config, myApplicationId, myIpAddress);
+		Gossiper gossiper = new Gossiper(config, myIpAddress, myIpAddress);
 		try {
             gossiper.loop();
         } catch (Exception e) {
