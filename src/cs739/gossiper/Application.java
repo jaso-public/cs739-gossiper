@@ -8,7 +8,6 @@ public class Application {
     public String id;
     public Address address;
     public long heartbeat;
-    public Status s = Status.Ok;
 
     
     public Application() {
@@ -25,7 +24,6 @@ public class Application {
 
     @Override
     public String toString() {
-        return "Application [type=" + type + ", id=" + id + ", address=" + address + ", heartbeat=" + heartbeat + ", s="
-                + s + "]";
+        return "Application [type=" + type + ", id=" + id + ", address=" + address + ", heartbeat=" + heartbeat + "]";
     }
  }

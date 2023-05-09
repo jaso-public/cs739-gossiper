@@ -18,7 +18,7 @@ public class GetBootstrapList {
         Config config = new Config();
         
         while(true) {
-            Application app = new Application("Gossiper", "28934234", new Address("127.0.0.1", 56678), 1);
+            Application app = new Application(Application.GossipingApp, "28934234", new Address("127.0.0.1", 56678), 1);
             System.out.println(app);
             BootstrapRequest request = new BootstrapRequest(app);
             
