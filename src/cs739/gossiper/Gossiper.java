@@ -95,6 +95,7 @@ public class Gossiper implements Handler {
     }
     
     
+    @SuppressWarnings("unused")
     private static String getApplicationId(Config config) throws Exception {
         File file = new File(config.pathToApplicationId);
         if(file.exists()) {
