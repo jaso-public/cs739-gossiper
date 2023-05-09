@@ -113,6 +113,7 @@ public class DdbInserter implements Runnable {
 				item.put(entry.getKey(), new AttributeValue(entry.getValue()));								
 			}
 			
+			logger.info("about to put:"+item);
 			PutItemRequest putItemRequest = new PutItemRequest().withTableName(Constants.tableName).withItem(item);			
 			putItemRequest.setReturnValues(ReturnValue.ALL_OLD);
             

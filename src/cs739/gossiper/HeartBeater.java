@@ -21,8 +21,8 @@ public class HeartBeater implements Handler {
     
     private void sendHeartbeat() {
         logger.info("sending hearbeat");
-        Heartbeat heartbeat = new Heartbeat("FooApp", "1234", new Address("127.0.0.1", 56678));
-        Address serverAddress = new Address("127.0.0.1", 3001);
+        Heartbeat heartbeat = new Heartbeat("FooApp", "hb-1234", new Address("127.0.0.1", 56678));
+        Address serverAddress = new Address("newjaso.com", 3001);
         try {
             executor.submitTask(new SendMessage(serverAddress, heartbeat));
         } catch (InterruptedException e) {
