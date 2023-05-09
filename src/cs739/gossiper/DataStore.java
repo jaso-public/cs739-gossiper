@@ -1,10 +1,12 @@
 package cs739.gossiper;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -137,15 +139,14 @@ public class DataStore {
         return result;
     }
     
-    //TODO FIX THIS!!!!!!!!!!
     public synchronized Address getRandomPeer() {
-        Address result = null;
-        for(Info i : apps.values()) {
-            if(! i.type.equals(Application.GossipingApp)) continue;
-            if(result==null) result = i.address;
-            if(rng.nextDouble() < 0.1) result = i.address;           
-        }
-        return result;       
+        while (true) {
+            Collection<Info> values = apps.values();
+            Optional<Info> info = values.stream().skip(rng.nextInt(values.size())).findFirst();
+            if (info.get() == null)
+                continue;
+            return info.get().address;
+        }   
     }  
  
     public void incrementHeartbeat(String id) {
