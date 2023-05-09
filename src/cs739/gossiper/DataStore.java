@@ -94,7 +94,7 @@ public class DataStore {
 	    
 	    if(app.heartbeat <= info.heartbeat) {
 	        // this is old news
-	        logger.info("IGNORED updateApplication -- app.heartbeat:"+app.heartbeat+" info.heartbeat:"+info.heartbeat);
+	        logger.debug("IGNORED updateApplication -- app.heartbeat:"+app.heartbeat+" info.heartbeat:"+info.heartbeat);
 	        return;
 	    }
 	    

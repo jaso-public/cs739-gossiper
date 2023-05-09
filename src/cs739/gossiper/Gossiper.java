@@ -17,7 +17,6 @@ import org.apache.logging.log4j.core.config.Configurator;
 
 import cs739.gossiper.messages.BootstrapReply;
 import cs739.gossiper.messages.BootstrapRequest;
-import cs739.gossiper.messages.Gossip;
 import cs739.gossiper.messages.IpAddressReply;
 import cs739.gossiper.messages.IpAddressRequest;
 
