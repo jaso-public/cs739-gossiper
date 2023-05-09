@@ -38,85 +38,83 @@ public class MessageThread implements Runnable {
     }
 
 
-    private void doLoop(Socket socket) throws Exception {
-        while(true) {
-            Message message = MessageHelper.readMessage(socket.getInputStream());
-            if(message == null) {
-                logger.info("socket closed:"+socket);
-                return;
-            }
-                       
-            if(message.getType() == MessageType.BootstrapRequest) {
-                BootstrapRequest request = (BootstrapRequest) message;
-                Set<Application> apps = dataStore.getBootstrapHosts(config.bootstrapCount);
-                List<Application> appList = new ArrayList<>(apps);
-                BootstrapReply reply = new BootstrapReply(appList);
-                MessageHelper.send(socket.getOutputStream(), reply);   
-                dataStore.updateApplication(request.application);
-                return;
-            }
+    private void handleMessage(Socket socket) throws Exception {
+        Message message = MessageHelper.readMessage(socket.getInputStream());
+        if(message == null) {
+            logger.info("socket closed:"+socket);
+            return;
+        }
+                   
+        if(message.getType() == MessageType.BootstrapRequest) {
+            BootstrapRequest request = (BootstrapRequest) message;
+            Set<Application> apps = dataStore.getBootstrapHosts(config.bootstrapCount);
+            List<Application> appList = new ArrayList<>(apps);
+            BootstrapReply reply = new BootstrapReply(appList);
+            MessageHelper.send(socket.getOutputStream(), reply);   
+            dataStore.updateApplication(request.application);
+            return;
+        }
+        
+        if(message.getType() == MessageType.Gossip) {
+            Gossip  request = (Gossip) message;
+            for(Application app : request.applications) dataStore.updateApplication(app);
+            Gossip reply = new Gossip(dataStore.getApplications());
+            MessageHelper.send(socket.getOutputStream(), reply);   
+            return;
+        }          
             
-            if(message.getType() == MessageType.Gossip) {
-                Gossip  request = (Gossip) message;
-                for(Application app : request.applications) dataStore.updateApplication(app);
-                Gossip reply = new Gossip(dataStore.getApplications());
-                MessageHelper.send(socket.getOutputStream(), reply);   
-                return;
-            }          
-                
-            if(message.getType() == MessageType.Rumor) {
-                Rumor rumor = (Rumor) message;
-                Application application = dataStore.getApplication(rumor.application.id);
-                if(application == null) {
-                    dataStore.updateApplication(rumor.application);
-                    if(rumor.ttl<1) continue;
-                    rumor.ttl--;
-                    Set<Application> apps = dataStore.getBootstrapHosts(config.rumorFanOut);
-                    for(Application app : apps) {
-                        executor.submitTask(new SendMessage(app.address, rumor));
-                    }                    
-                }
-                return;
+        if(message.getType() == MessageType.Rumor) {
+            Rumor rumor = (Rumor) message;
+            Application application = dataStore.getApplication(rumor.application.id);
+            if(application == null) {
+                dataStore.updateApplication(rumor.application);
+                if(rumor.ttl<1) return;
+                rumor.ttl--;
+                Set<Application> apps = dataStore.getBootstrapHosts(config.rumorFanOut);
+                for(Application app : apps) {
+                    executor.submitTask(new SendMessage(app.address, rumor));
+                }                    
             }
-                        
-            if(message.getType() == MessageType.Heartbeat) {
-                Heartbeat heartbeat = (Heartbeat) message;
-                Application application = dataStore.getApplication(heartbeat.id);
-                if(application == null) {
-                    application = new Application(heartbeat.type, heartbeat.id, heartbeat.address, 1);
-                    dataStore.updateApplication(application);
-                    Rumor rumor = new Rumor(application, config.rumorTTL);
-                    Set<Application> apps = dataStore.getBootstrapHosts(config.rumorFanOut);
-                    for(Application app : apps) {
-                        executor.submitTask(new SendMessage(app.address, rumor));
-                    }                    
-                } else {
-                    dataStore.incrementHeartbeat(heartbeat.id);
-                }
-                return;
-            } 
-            
-            if(message.getType() == MessageType.IpAddressRequest) {
-                @SuppressWarnings("unused")
-                IpAddressRequest  request = (IpAddressRequest) message;
-                InetAddress remoteAddress = socket.getInetAddress();
-                Address address = new Address(remoteAddress.getHostAddress(), socket.getPort());
-                IpAddressReply reply = new IpAddressReply(address);
-                logger.info("got request for IpAddress -- reply:"+reply);
-                MessageHelper.send(socket.getOutputStream(), reply);   
-                return;
-            }          
+            return;
+        }
+                    
+        if(message.getType() == MessageType.Heartbeat) {
+            Heartbeat heartbeat = (Heartbeat) message;
+            Application application = dataStore.getApplication(heartbeat.id);
+            if(application == null) {
+                application = new Application(heartbeat.type, heartbeat.id, heartbeat.address, 1);
+                dataStore.updateApplication(application);
+                Rumor rumor = new Rumor(application, config.rumorTTL);
+                Set<Application> apps = dataStore.getBootstrapHosts(config.rumorFanOut);
+                for(Application app : apps) {
+                    executor.submitTask(new SendMessage(app.address, rumor));
+                }                    
+            } else {
+                dataStore.incrementHeartbeat(heartbeat.id);
+            }
+            return;
+        } 
+        
+        if(message.getType() == MessageType.IpAddressRequest) {
+            @SuppressWarnings("unused")
+            IpAddressRequest  request = (IpAddressRequest) message;
+            InetAddress remoteAddress = socket.getInetAddress();
+            Address address = new Address(remoteAddress.getHostAddress(), socket.getPort());
+            IpAddressReply reply = new IpAddressReply(address);
+            logger.info("got request for IpAddress -- reply:"+reply);
+            MessageHelper.send(socket.getOutputStream(), reply);   
+            return;
+        }          
 
-             
-            throw new IOException("don't know how to handle message:"+message);
-        }        
+         
+        throw new IOException("don't know how to handle message:"+message);      
     }
 
     @Override
     public void run() {
         try {
             socket.setSoTimeout(1000);
-            doLoop(socket);
+            handleMessage(socket);
         } catch(Throwable t) {
             logger.error("doLoop()", t);
             closeQuietly(socket);
