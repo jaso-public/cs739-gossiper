@@ -67,7 +67,7 @@ public class Gossiper implements Handler {
 
     @Override
     public void onEvent(long now) {
-        logger.info("doing a heartbeat for application:"+myApplicationId);
+        logger.info("doing a heartbeat for application:"+myApplicationId+" now:"+now);
         dataStore.incrementHeartbeat(myApplicationId);
         eventDispatcher.register(config.heartbeatInterval, this);
     }
