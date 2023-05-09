@@ -55,7 +55,7 @@ public class MessageHelper {
     }
     
     public static Message readMessage(InputStream is) throws IOException {
-        byte[] header = read(is, 16);
+        byte[] header = readHeader(is, 16);
         ByteBuffer buffer = ByteBuffer.wrap(header);
         int messageType = buffer.getInt();
         int messageLength = buffer.getInt();
