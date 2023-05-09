@@ -29,8 +29,7 @@ public class Gossip implements Message {
             sb.append(app+"\n");
         }
         
-        return "Gossip [applications=" + applications + "]";
-        
+        return sb.toString();        
     }
     
     
