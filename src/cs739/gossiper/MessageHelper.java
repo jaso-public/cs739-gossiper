@@ -25,6 +25,22 @@ public class MessageHelper {
         return crc.getValue();      
     }
     
+    public static byte[] readHeader(InputStream is, int size) throws IOException {
+        byte[] result = new byte[size];
+        int offset = 0;
+        int remaining = size;
+        while(remaining > 0) {
+            int count = is.read(result, offset, remaining);
+            if(count<0) {
+                if(offset==0) return null;
+                throw new IOException("premute end of stream");
+            }
+            offset += count;
+            remaining -= offset;
+        }
+        return result;
+    }
+
     public static byte[] read(InputStream is, int size) throws IOException {
         byte[] result = new byte[size];
         int offset = 0;
