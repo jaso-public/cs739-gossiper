@@ -1,10 +1,7 @@
 package cs739.gossiper;
 
-import java.util.Random;
-
 public class Config {
-    
-    String myApplicationId = String.valueOf(Math.abs(new Random().nextLong()));
+    String pathToApplicationId = "/home/ubuntu/cs739-gossiper/applicationId";
     
     int bootstrapCount = 10;
     int timeToIncommunicado = 10000;
@@ -19,4 +16,6 @@ public class Config {
     int bootstrapPort = 3001;
 
     int executorPoolSize = 20;
+
+    long heartbeatInterval = 899; // for no great reason
 }

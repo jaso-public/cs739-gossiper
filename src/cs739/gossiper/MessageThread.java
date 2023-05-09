@@ -78,8 +78,7 @@ public class MessageThread implements Runnable {
                 }
                 return;
             }
-            
-            
+                        
             if(message.getType() == MessageType.Heartbeat) {
                 Heartbeat heartbeat = (Heartbeat) message;
                 Application application = dataStore.getApplication(heartbeat.id);
