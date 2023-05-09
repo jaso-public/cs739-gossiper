@@ -23,7 +23,14 @@ public class Gossip implements Message {
 
     @Override
     public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("GossipMessage\n");
+        for(Application app : applications) {
+            sb.append(app+"\n");
+        }
+        
         return "Gossip [applications=" + applications + "]";
+        
     }
     
     
