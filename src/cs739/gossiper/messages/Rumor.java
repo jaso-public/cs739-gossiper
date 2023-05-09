@@ -7,6 +7,10 @@ public class Rumor implements Message {
     public Application application;
     public int ttl;
 
+    
+    public Rumor() {
+    }
+
     public Rumor(Application application, int ttl) {
         this.application = application;
         this.ttl = ttl;
