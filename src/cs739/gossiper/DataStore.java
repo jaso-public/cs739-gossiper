@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -152,6 +154,28 @@ public class DataStore {
             return info.get().address;
         }   
     }  
+
+    public synchronized Set<Application> getRandomApplications(int n) {
+        Supplier<Stream<Info>> okApps = () -> apps.values().stream().filter((info) -> info != null && info.status == Status.Ok);
+        Supplier<Stream<Info>> notOkApps = () -> apps.values().stream().filter((info) -> info != null && info.status != Status.Ok);
+
+        long okCount = okApps.get().count();
+        long notOkCount = notOkApps.get().count();
+
+        Set<Application> applications = new HashSet<>(n);
+
+        while(applications.size() < n && applications.size() < okCount) {
+            int index = rng.nextInt(n);
+            okApps.get().skip(index).findFirst().ifPresent((info) -> applications.add(info.toApp()));
+        }
+        
+        while(applications.size() < n && applications.size() < okCount + notOkCount) {
+            int index = rng.nextInt(n);
+            notOkApps.get().skip(index).findFirst().ifPresent((info) -> applications.add(info.toApp()));
+        }
+
+        return applications;
+    }
  
     public void incrementHeartbeat(String id) {
         Info info = apps.get(id);
