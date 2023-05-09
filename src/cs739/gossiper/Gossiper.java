@@ -88,8 +88,7 @@ public class Gossiper implements Handler {
         eventDispatcher.register(config.heartbeatInterval, this);
         
         try {
-            Address peer = dataStore.getRandomPeer();
-            executor.submitTask(new SendMessage(peer, new Gossip(dataStore.getApplications())));
+             executor.submitTask(new SendGossip(dataStore));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
