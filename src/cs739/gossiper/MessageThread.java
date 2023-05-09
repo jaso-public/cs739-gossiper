@@ -61,7 +61,7 @@ public class MessageThread implements Runnable {
                 for(Application app : request.applications) dataStore.updateApplication(app);
                 Gossip reply = new Gossip(dataStore.getApplications());
                 MessageHelper.send(socket.getOutputStream(), reply);   
-                continue;
+                return;
             }          
                 
             if(message.getType() == MessageType.Rumor) {

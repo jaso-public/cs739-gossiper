@@ -20,7 +20,6 @@ import cs739.gossiper.messages.BootstrapRequest;
 import cs739.gossiper.messages.Gossip;
 import cs739.gossiper.messages.IpAddressReply;
 import cs739.gossiper.messages.IpAddressRequest;
-import cs739.gossiper.messages.Message;
 
 public class Gossiper implements Handler {
 	private static final Logger logger = LogManager.getLogger(Gossiper.class);
