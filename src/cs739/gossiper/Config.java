@@ -19,7 +19,7 @@ public class Config {
 
     long heartbeatInterval = 899; // for no great reason
 
-    private Config() {
+    public Config() {
     }
 
     private static Config singleton;
