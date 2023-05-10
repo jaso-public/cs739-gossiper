@@ -19,6 +19,9 @@ public class Config {
 
     long heartbeatInterval = 899; // for no great reason
 
+    boolean doPushGossip = true;
+    boolean doPullGossip = false;
+
     public Config() {
     }
 

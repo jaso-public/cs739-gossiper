@@ -60,7 +60,16 @@ public class MessageThread implements Runnable {
             Gossip request = (Gossip) message;
             for (Application app : request.applications)
                 dataStore.updateApplication(app);
-            Gossip reply = new Gossip(dataStore.getApplications());
+
+            List<Application> apps;
+            if (Config.get().doPullGossip) {
+                apps = dataStore.getApplications();
+            } else {
+                apps = new ArrayList<>();
+            }
+
+            Gossip reply = new Gossip(apps);
+
             MessageHelper.send(socket.getOutputStream(), reply);
             return;
         }
@@ -110,7 +119,6 @@ public class MessageThread implements Runnable {
         }
 
         if (message.getType() == MessageType.Terminate) {
-            // TODO
             HashMap<String, String> map = new HashMap<>();
             map.put("event", "terminate");
             ddbInserter.Record(map);
