@@ -115,6 +115,7 @@ public class MessageThread implements Runnable {
             map.put("event", "terminate");
             ddbInserter.Record(map);
             ddbInserter.drain();
+            System.exit(0);
         }
 
         if (message.getType() == MessageType.UpdateConfig) {
