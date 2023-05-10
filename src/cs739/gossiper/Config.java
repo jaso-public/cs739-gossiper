@@ -37,4 +37,14 @@ public class Config {
     public static void set(Config config) {
         singleton = config;
     }
+
+    @Override
+    public String toString() {
+        return "Config [pathToApplicationId=" + pathToApplicationId + ", bootstrapCount=" + bootstrapCount
+                + ", timeToIncommunicado=" + timeToIncommunicado + ", rumorTTL=" + rumorTTL + ", rumorFanOut="
+                + rumorFanOut + ", gossipInterval=" + gossipInterval + ", listenPort=" + listenPort + ", backlog="
+                + backlog + ", bootstrapHost=" + bootstrapHost + ", bootstrapPort=" + bootstrapPort
+                + ", executorPoolSize=" + executorPoolSize + ", heartbeatInterval=" + heartbeatInterval
+                + ", doPushGossip=" + doPushGossip + ", doPullGossip=" + doPullGossip + "]";
+    }
 }
