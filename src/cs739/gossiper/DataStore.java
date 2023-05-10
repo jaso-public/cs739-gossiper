@@ -18,7 +18,6 @@ import org.apache.logging.log4j.Logger;
 public class DataStore {
     private static final Logger logger = LogManager.getLogger(DataStore.class);
 
-    private final Config config;
     private final EventDispatcher eventDispatcher;
     private final DdbInserter ddbInserter;
     private final Random rng = new Random();
@@ -75,8 +74,7 @@ public class DataStore {
         }
     }
 
-    public DataStore(Config config, EventDispatcher eventDispatcher, DdbInserter ddbInserter) {
-        this.config = config;
+    public DataStore(EventDispatcher eventDispatcher, DdbInserter ddbInserter) {
         this.eventDispatcher = eventDispatcher;
         this.ddbInserter = ddbInserter;
     }
@@ -110,7 +108,7 @@ public class DataStore {
         info.lastHeartbeatMillis = System.currentTimeMillis();
         if (info.eventId >= 0)
             eventDispatcher.cancel(info.eventId);
-        info.eventId = eventDispatcher.register(config.timeToIncommunicado, info);
+        info.eventId = eventDispatcher.register(Config.get().timeToIncommunicado, info);
         info.heartbeat = app.heartbeat;
         if (info.status != Status.Ok) {
             ddbInserter.Record(info.toMap("BecameOk"));
@@ -191,7 +189,7 @@ public class DataStore {
 
             if (info.eventId >= 0)
                 eventDispatcher.cancel(info.eventId);
-            info.eventId = eventDispatcher.register(config.timeToIncommunicado, info);
+            info.eventId = eventDispatcher.register(Config.get().timeToIncommunicado, info);
             if (oldStatus != Status.Ok) {
                 ddbInserter.Record(info.toMap("BecameOk"));
             }
