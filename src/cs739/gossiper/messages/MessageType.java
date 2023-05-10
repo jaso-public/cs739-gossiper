@@ -8,10 +8,11 @@ public enum MessageType {
     Heartbeat(41),
     IpAddressRequest(101),
     IpAddressReply(102),
-    Dump(1001);
+    Dump(1001),
+    Terminate(1002),
+    UpdateConfig(1003);
 
     private int value;
-    
 
     private MessageType(int value) {
         this.value = value;
