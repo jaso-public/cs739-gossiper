@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -19,6 +20,8 @@ import cs739.gossiper.messages.IpAddressRequest;
 import cs739.gossiper.messages.Message;
 import cs739.gossiper.messages.MessageType;
 import cs739.gossiper.messages.Rumor;
+import cs739.gossiper.messages.TerminateRequest;
+import cs739.gossiper.messages.UpdateConfigRequest;
 
 public class MessageThread implements Runnable {
 
@@ -28,13 +31,15 @@ public class MessageThread implements Runnable {
     private final Config config;
     private final DataStore dataStore;
     private final BoundedExecutor executor;
+    private final DdbInserter ddbInserter;
         
     
-    public MessageThread(Socket socket, Config config, DataStore dataStore, BoundedExecutor executor) {
+    public MessageThread(Socket socket, Config config, DataStore dataStore, BoundedExecutor executor, DdbInserter ddbInserter) {
         this.socket = socket;
         this.config = config;
         this.dataStore = dataStore;
         this.executor = executor;
+        this.ddbInserter = ddbInserter;
     }
 
 
@@ -104,6 +109,26 @@ public class MessageThread implements Runnable {
             logger.info("got request for IpAddress -- reply:"+reply);
             MessageHelper.send(socket.getOutputStream(), reply);   
             return;
+        }          
+        
+        if(message.getType() == MessageType.Terminate) {
+            // TODO
+            HashMap<String,String> map = new HashMap<>();
+            map.put("event", "terminate");
+            ddbInserter.Record(map);
+            ddbInserter.drain();
+        }   
+        
+        if(message.getType() == MessageType.UpdateConfig) {
+            Config updatedConfig = ((UpdateConfigRequest) message).config;
+            if(updatedConfig == null)
+            {
+                logger.warn("UpdateConfigRequest -- Updated config is null");
+                return;
+            }
+            
+            // TODO
+            throw new IOException("don't know how to handle message:"+message);      
         }          
 
          

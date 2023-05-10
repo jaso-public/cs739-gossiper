@@ -19,6 +19,8 @@ import cs739.gossiper.messages.IpAddressRequest;
 import cs739.gossiper.messages.Message;
 import cs739.gossiper.messages.MessageType;
 import cs739.gossiper.messages.Rumor;
+import cs739.gossiper.messages.TerminateRequest;
+import cs739.gossiper.messages.UpdateConfigRequest;
 
 public class MessageHelper {
     
@@ -97,6 +99,14 @@ public class MessageHelper {
             return JsonIterator.deserialize(body, Heartbeat.class);
         }
         
+        if (messageType == MessageType.UpdateConfig.getValue()) {
+            return JsonIterator.deserialize(body, UpdateConfigRequest.class);
+        }
+
+        if (messageType == MessageType.Terminate.getValue()) {
+            return JsonIterator.deserialize(body, TerminateRequest.class);
+        }
+
         throw new IOException("don't know how to handle messageType:"+messageType);
     }
     

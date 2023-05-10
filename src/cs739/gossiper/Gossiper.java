@@ -76,7 +76,7 @@ public class Gossiper implements Handler {
             while(true) {
                 Socket s = ss.accept();
                 logger.info("accepted socket:"+s);
-                executor.submitTask(new MessageThread(s, config, dataStore, executor));               
+                executor.submitTask(new MessageThread(s, config, dataStore, executor, ddbInserter));               
             }
         }	    
 	}
