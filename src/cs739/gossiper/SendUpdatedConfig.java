@@ -10,11 +10,13 @@ public class SendUpdatedConfig {
         Config config = new Config();
         config.backlog = 100;
 
-        try (Socket socket = new Socket("54.188.42.102", Config.get().bootstrapPort)) {
+        String host = args[0];
+
+        try (Socket socket = new Socket(host, Config.get().bootstrapPort)) {
             MessageHelper.send(socket.getOutputStream(), new UpdateConfigRequest(config));
             socket.close();
         } catch (Throwable t) {
-            System.err.println("failed to send UpdateConfigRequest to " + Config.get().bootstrapHost + " " + t);
+            System.err.println("failed to send UpdateConfigRequest to " + host + " " + t);
         }
     }
 
