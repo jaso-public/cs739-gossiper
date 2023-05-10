@@ -125,8 +125,8 @@ public class MessageThread implements Runnable {
                 return;
             }
 
-            // TODO
-            throw new IOException("don't know how to handle message:" + message);
+            Config.set(updatedConfig);
+            return;
         }
 
         throw new IOException("don't know how to handle message:" + message);
