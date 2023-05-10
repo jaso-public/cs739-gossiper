@@ -125,6 +125,8 @@ public class MessageThread implements Runnable {
                 return;
             }
 
+            logger.info("UpdateConfigRequest -- Updating config");
+
             Config.set(updatedConfig);
             return;
         }
