@@ -1,5 +1,7 @@
 package cs739.gossiper.messages;
 
+import cs739.gossiper.Config;
+
 public class GetConfigReply implements Message {
 
     public Config config;
