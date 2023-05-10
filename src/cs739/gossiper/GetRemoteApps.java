@@ -15,7 +15,7 @@ public class GetRemoteApps {
     public static void main(String[] args) throws InterruptedException {
         Configurator.initialize(null, "log4j2.xml");
 
-        Gossip request = new Gossip(new ArrayList<Application>());
+        Gossip request = new Gossip(new ArrayList<Application>(), true);
 
         try (Socket socket = new Socket(Config.get().bootstrapHost, Config.get().bootstrapPort)) {
             logger.info("socket created -- sending message");

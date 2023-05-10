@@ -62,7 +62,7 @@ public class MessageThread implements Runnable {
                 dataStore.updateApplication(app);
 
             List<Application> apps;
-            if (Config.get().doPullGossip) {
+            if (Config.get().doPullGossip || request.force) {
                 apps = dataStore.getApplications();
             } else {
                 apps = new ArrayList<>();
