@@ -12,6 +12,8 @@ import com.jsoniter.output.JsonStream;
 
 import cs739.gossiper.messages.BootstrapReply;
 import cs739.gossiper.messages.BootstrapRequest;
+import cs739.gossiper.messages.GetConfigReply;
+import cs739.gossiper.messages.GetConfigRequest;
 import cs739.gossiper.messages.Gossip;
 import cs739.gossiper.messages.Heartbeat;
 import cs739.gossiper.messages.IpAddressReply;
@@ -23,21 +25,22 @@ import cs739.gossiper.messages.TerminateRequest;
 import cs739.gossiper.messages.UpdateConfigRequest;
 
 public class MessageHelper {
-    
+
     public static long computeCrc(byte[] bytes) {
         CRC32 crc = new CRC32();
         crc.update(bytes);
-        return crc.getValue();      
+        return crc.getValue();
     }
-    
+
     public static byte[] readHeader(InputStream is, int size) throws IOException {
         byte[] result = new byte[size];
         int offset = 0;
         int remaining = size;
-        while(remaining > 0) {
+        while (remaining > 0) {
             int count = is.read(result, offset, remaining);
-            if(count<0) {
-                if(offset==0) return null;
+            if (count < 0) {
+                if (offset == 0)
+                    return null;
                 throw new IOException("premute end of stream");
             }
             offset += count;
@@ -50,55 +53,59 @@ public class MessageHelper {
         byte[] result = new byte[size];
         int offset = 0;
         int remaining = size;
-        while(remaining > 0) {
+        while (remaining > 0) {
             int count = is.read(result, offset, remaining);
-            if(count<0) throw new IOException("premute end of stream");
+            if (count < 0)
+                throw new IOException("premute end of stream");
             offset += count;
             remaining -= offset;
         }
         return result;
     }
-    
+
     public static Message readMessage(InputStream is) throws IOException {
         byte[] header = readHeader(is, 16);
-        if(header==null) return null;
+        if (header == null)
+            return null;
         ByteBuffer buffer = ByteBuffer.wrap(header);
         int messageType = buffer.getInt();
         int messageLength = buffer.getInt();
         long messageCrc = buffer.getLong();
-        
+
         byte[] body = read(is, messageLength);
-        if(body==null) throw new IOException("message doesn't have a body");
-        if(messageCrc != computeCrc(body)) throw new IOException("message crc mismatch");
-        
-        if(messageType == MessageType.BootstrapRequest.getValue()) {
+        if (body == null)
+            throw new IOException("message doesn't have a body");
+        if (messageCrc != computeCrc(body))
+            throw new IOException("message crc mismatch");
+
+        if (messageType == MessageType.BootstrapRequest.getValue()) {
             return JsonIterator.deserialize(body, BootstrapRequest.class);
         }
-        
-        if(messageType == MessageType.BootstrapReply.getValue()) {
+
+        if (messageType == MessageType.BootstrapReply.getValue()) {
             return JsonIterator.deserialize(body, BootstrapReply.class);
         }
-        
-        if(messageType == MessageType.Gossip.getValue()) {
+
+        if (messageType == MessageType.Gossip.getValue()) {
             return JsonIterator.deserialize(body, Gossip.class);
         }
-        
-        if(messageType == MessageType.Rumor.getValue()) {
+
+        if (messageType == MessageType.Rumor.getValue()) {
             return JsonIterator.deserialize(body, Rumor.class);
         }
-        
-        if(messageType == MessageType.IpAddressRequest.getValue()) {
+
+        if (messageType == MessageType.IpAddressRequest.getValue()) {
             return JsonIterator.deserialize(body, IpAddressRequest.class);
         }
-        
-        if(messageType == MessageType.IpAddressReply.getValue()) {
+
+        if (messageType == MessageType.IpAddressReply.getValue()) {
             return JsonIterator.deserialize(body, IpAddressReply.class);
         }
-        
-        if(messageType == MessageType.Heartbeat.getValue()) {
+
+        if (messageType == MessageType.Heartbeat.getValue()) {
             return JsonIterator.deserialize(body, Heartbeat.class);
         }
-        
+
         if (messageType == MessageType.UpdateConfig.getValue()) {
             return JsonIterator.deserialize(body, UpdateConfigRequest.class);
         }
@@ -107,9 +114,17 @@ public class MessageHelper {
             return JsonIterator.deserialize(body, TerminateRequest.class);
         }
 
-        throw new IOException("don't know how to handle messageType:"+messageType);
+        if (messageType == MessageType.GetConfigRequest.getValue()) {
+            return JsonIterator.deserialize(body, GetConfigRequest.class);
+        }
+
+        if (messageType == MessageType.GetConfigReply.getValue()) {
+            return JsonIterator.deserialize(body, GetConfigReply.class);
+        }
+
+        throw new IOException("don't know how to handle messageType:" + messageType);
     }
-    
+
     public static void send(OutputStream os, Message message) throws IOException {
         String result = JsonStream.serialize(message);
         byte[] body = result.getBytes(StandardCharsets.UTF_8);

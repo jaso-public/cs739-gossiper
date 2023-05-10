@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import cs739.gossiper.messages.BootstrapReply;
 import cs739.gossiper.messages.BootstrapRequest;
+import cs739.gossiper.messages.GetConfigReply;
 import cs739.gossiper.messages.Gossip;
 import cs739.gossiper.messages.Heartbeat;
 import cs739.gossiper.messages.IpAddressReply;
@@ -136,6 +137,12 @@ public class MessageThread implements Runnable {
             logger.info("UpdateConfigRequest -- Updating config");
 
             Config.set(updatedConfig);
+            return;
+        }
+
+        if (message.getType() == MessageType.GetConfigRequest) {
+            GetConfigReply reply = new GetConfigReply(Config.get());
+            MessageHelper.send(socket.getOutputStream(), reply);
             return;
         }
 

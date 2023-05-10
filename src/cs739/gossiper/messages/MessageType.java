@@ -10,7 +10,9 @@ public enum MessageType {
     IpAddressReply(102),
     Dump(1001),
     Terminate(1002),
-    UpdateConfig(1003);
+    UpdateConfig(1003),
+    GetConfigRequest(1004),
+    GetConfigReply(1005);
 
     private int value;
 
